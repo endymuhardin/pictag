@@ -7,8 +7,8 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>pictag-common</name>
-  <url>http://maven.apache.org</url>
+  <name>Pictag Endy</name>
+  <url>https://github.com/endymuhardin/pictag</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
