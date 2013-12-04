@@ -2,8 +2,14 @@ package com.muhardin.endy.pictag.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import training.pictag.domain.User;
 
 public class UserDao {
@@ -52,10 +58,40 @@ public class UserDao {
     }
     
     public void insert(User u){
-    
+        try {
+            String sql = "insert into tbl_user (id, username, password, email) "
+                    + "values (?, ?, ?, ?)";
+            PreparedStatement ps = databaseConnection.prepareStatement(sql);
+            String id = UUID.randomUUID().toString();
+            ps.setString(1, id);
+            ps.setString(2, u.getUsername());
+            ps.setString(3, u.getPassword());
+            ps.setString(4, u.getEmail());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public List<User> findAllUsers(){
-        return null;
+        try {
+            String sql = "select * from tbl_user";
+            PreparedStatement ps = databaseConnection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            List<User> result = new ArrayList<User>();
+            while(rs.next()){
+                User u = new User();
+                u.setId(rs.getString("id"));
+                u.setUsername(rs.getString("username"));
+                u.setPassword(rs.getString("password"));
+                u.setEmail(rs.getString("email"));
+                result.add(u);
+            }
+            return result;
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 }
