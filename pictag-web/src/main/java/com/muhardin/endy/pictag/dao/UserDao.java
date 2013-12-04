@@ -65,6 +65,9 @@ public class UserDao {
         try {
             String sql = "insert into tbl_user (id, username, password, email) "
                     + "values (?, ?, ?, ?)";
+            
+            databaseConnection.setAutoCommit(false);
+            
             PreparedStatement ps = databaseConnection.prepareStatement(sql);
             String id = UUID.randomUUID().toString();
             ps.setString(1, id);
@@ -72,8 +75,20 @@ public class UserDao {
             ps.setString(3, u.getPassword());
             ps.setString(4, u.getEmail());
             ps.executeUpdate();
+            databaseConnection.commit();
         } catch (SQLException ex) {
             Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                databaseConnection.rollback();
+            } catch (SQLException ex1) {
+                Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            try {
+                databaseConnection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
