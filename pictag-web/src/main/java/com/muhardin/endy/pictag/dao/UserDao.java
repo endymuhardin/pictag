@@ -75,7 +75,7 @@ public class UserDao {
     
     public List<User> findAllUsers(){
         try {
-            String sql = "select * from tbl_user";
+            String sql = "select * from tbl_user order by id";
             PreparedStatement ps = databaseConnection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             
