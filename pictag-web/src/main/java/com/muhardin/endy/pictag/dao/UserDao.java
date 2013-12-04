@@ -15,6 +15,10 @@ import training.pictag.domain.User;
 public class UserDao {
     private DatabaseConfiguration configuration;
     private Connection databaseConnection;
+
+    public Connection getDatabaseConnection() {
+        return databaseConnection;
+    }
     
     public UserDao(String databaseDriver, String databaseUrl, 
             String databaseUsername, String databasePassword){
