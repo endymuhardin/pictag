@@ -1,6 +1,6 @@
 package com.muhardin.endy.pictag.dao;
 
-class DatabaseConfiguration {
+public class DatabaseConfiguration {
     private String databaseDriverName;
     private String databaseUrl;
     private String databaseUsername;
