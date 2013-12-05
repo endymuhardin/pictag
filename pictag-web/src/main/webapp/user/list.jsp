@@ -11,7 +11,7 @@
         
         <b>This is /user/list.jsp</b>
         
-        <table border="1">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Username</th>

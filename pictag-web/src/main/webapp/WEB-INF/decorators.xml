@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators>
+    <decorator name="twitter-bootstrap-template" 
+               page="/WEB-INF/decorators/my-template.jsp">
+        <pattern>/*</pattern>
+    </decorator>
+</decorators>

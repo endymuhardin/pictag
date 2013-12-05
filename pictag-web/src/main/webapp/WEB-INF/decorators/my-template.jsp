@@ -1,4 +1,5 @@
-
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -11,10 +12,10 @@
     <title>Pictag Application</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="css/myapp.css" rel="stylesheet">
+    <link href="<%= request.getContextPath() %>/css/myapp.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -65,8 +66,7 @@
 
     <div class="container">
 
-        <h1>Screen Title</h1>
-        <p>Screen content goes here</p>
+        <decorator:body />
 
     </div> <!-- /container -->
 
@@ -75,6 +75,6 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="<%= request.getContextPath() %>/js/bootstrap.min.js"></script>
   </body>
 </html>
