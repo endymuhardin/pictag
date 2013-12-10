@@ -3,3 +3,6 @@ target
 
 # Eclipse output folder
 bin
+
+# Idea stuff
+.idea
