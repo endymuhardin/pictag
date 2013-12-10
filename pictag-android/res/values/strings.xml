@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Picture Tagging</string>
+    <string name="app_name">Pictag Apps</string>
     <string name="hello">Hello pictag-android!</string>
     <string name="action_settings">Configuration</string>
     <string name="hello_world">Hello world 123!</string>
     <string name="lblUsername">Username</string>
     <string name="lblPassword">Password</string>
+    <string name="lblLogin">Login</string>
 
 </resources>
