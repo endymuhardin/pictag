@@ -39,6 +39,7 @@
         android:text="@string/lblLogin"
         android:id="@+id/btnLogin"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/activity_horizontal_margin" />
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:onClick="processLogin"/>
 
 </LinearLayout>
