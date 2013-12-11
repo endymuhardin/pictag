@@ -3,28 +3,29 @@ package com.muhardin.endy.pictag;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.muhardin.endy.pictag.dto.LoginRequest;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import training.pictag.dto.PictagServerResponse;
 
-/**
- * Created by endy on 12/10/13.
- */
 public class LoginActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,21 +66,52 @@ public class LoginActivity extends Activity {
         @Override
         protected PictagServerResponse doInBackground(LoginRequest... loginRequests) {
             try {
-                Thread.sleep(5 * 1000); // sleep 5 seconds
+                // before even connecting, check internet access first
+                ConnectivityManager connMgr = (ConnectivityManager)
+                        getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo == null || !networkInfo.isConnected()) {
+                    Toast.makeText(LoginActivity.this, "No internet connection", Toast.LENGTH_SHORT);
+                    return null;
+                }
 
-                String serverReply = "{\"success\": false, \"message\": \"Wrong username/password\"}";
+                // connection configuration
+                String serverUrl = "http://192.168.1.148:8080/pictag-web/user/login";
+                URL url = new URL(serverUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
 
+                // connection parameters
+                LoginRequest login = loginRequests[0];
+                StringBuilder queryParam = new StringBuilder();
+                queryParam.append("username=");
+                queryParam.append(login.getUsername());
+                queryParam.append("&password=");
+                queryParam.append(login.getPassword());
+                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+                writer.write(queryParam.toString());
+                writer.close();
+
+                // connect and receive reply
+                conn.connect();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder serverReply = new StringBuilder();
+                String data;
+                while ((data = reader.readLine()) != null) {
+                    serverReply.append(data);
+                }
+                Log.d(LoginActivity.class.getName(), serverReply.toString());
+
+                // convert reply to object
                 ObjectMapper mapper = new ObjectMapper();
-                PictagServerResponse result = mapper.readValue(serverReply, PictagServerResponse.class);
+                PictagServerResponse result = mapper.readValue(serverReply.toString(), PictagServerResponse.class);
                 return result;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (JsonMappingException e) {
-                e.printStackTrace();
-            } catch (JsonParseException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                Log.d(LoginActivity.class.getName(), e.getMessage(), e);
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(LoginActivity.this);
+                dialogBuilder.setTitle("Network Communication Failure").setMessage(e.getMessage());
+                AlertDialog dialog = dialogBuilder.create();
+                dialog.show();
             }
             return null;
         }
