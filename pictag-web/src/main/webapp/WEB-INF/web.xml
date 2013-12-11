@@ -4,18 +4,14 @@
     <description>
         Welcome to Tomcat
     </description>
-  
-  
     <filter>
         <filter-name>sitemesh</filter-name>
         <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
     </filter>
- 
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-  
     <servlet>
         <servlet-name>Hello</servlet-name>
         <servlet-class>com.muhardin.endy.pictag.web.Hello</servlet-class>
@@ -24,6 +20,10 @@
         <servlet-name>UserList</servlet-name>
         <servlet-class>com.muhardin.endy.pictag.web.UserList</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CheckLoginServlet</servlet-name>
+        <servlet-class>com.muhardin.endy.pictag.web.CheckLoginServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Hello</servlet-name>
         <url-pattern>/hello.php</url-pattern>
@@ -31,5 +31,9 @@
     <servlet-mapping>
         <servlet-name>UserList</servlet-name>
         <url-pattern>/user/list</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CheckLoginServlet</servlet-name>
+        <url-pattern>/user/login</url-pattern>
     </servlet-mapping>
 </web-app>

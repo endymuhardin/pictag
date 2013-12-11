@@ -113,4 +113,20 @@ public class UserDao {
             return null;
         }
     }
+    
+    public Boolean isUsernamePasswordValid(String username, String password){
+        Boolean found = false;
+        try {
+            String sql = "select * from tbl_user where username=? and password=?";
+            PreparedStatement ps = databaseConnection.prepareStatement(sql);
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+            found = rs.next();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return found;
+    }
 }
