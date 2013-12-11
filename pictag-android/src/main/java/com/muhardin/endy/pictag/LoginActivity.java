@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -45,6 +46,17 @@ public class LoginActivity extends Activity {
         request.setUsername(username);
         request.setPassword(password);
 
+        // before even connecting, check internet access first
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected()) {
+            Toast toast = Toast.makeText(LoginActivity.this, "No internet connection", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0);
+            toast.show();
+            return;
+        }
+
         new CheckUsernamePasswordToServer().execute(request);
     }
 
@@ -66,15 +78,6 @@ public class LoginActivity extends Activity {
         @Override
         protected PictagServerResponse doInBackground(LoginRequest... loginRequests) {
             try {
-                // before even connecting, check internet access first
-                ConnectivityManager connMgr = (ConnectivityManager)
-                        getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-                if (networkInfo == null || !networkInfo.isConnected()) {
-                    Toast.makeText(LoginActivity.this, "No internet connection", Toast.LENGTH_SHORT);
-                    return null;
-                }
-
                 // connection configuration
                 String serverUrl = "http://192.168.1.148:8080/pictag-web/user/login";
                 URL url = new URL(serverUrl);
