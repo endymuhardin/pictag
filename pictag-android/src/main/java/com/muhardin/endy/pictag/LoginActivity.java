@@ -1,11 +1,20 @@
 package com.muhardin.endy.pictag;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+
+import com.muhardin.endy.pictag.dto.LoginRequest;
+
+import java.util.concurrent.ExecutionException;
+
+import training.pictag.dto.PictagServerResponse;
 
 /**
  * Created by endy on 12/10/13.
@@ -25,8 +34,58 @@ public class LoginActivity extends Activity {
         Log.v(this.getClass().getName(), "Username : "+username);
         Log.v(this.getClass().getName(), "Password : "+password);
 
-        Intent nextPage = new Intent(this, MainScreenActivity.class);
-        nextPage.putExtra("username", username);
-        startActivity(nextPage);
+        LoginRequest request = new LoginRequest();
+        request.setUsername(username);
+        request.setPassword(password);
+
+        new CheckUsernamePasswordToServer().execute(request);
+    }
+
+    private class CheckUsernamePasswordToServer extends AsyncTask<LoginRequest, Void, PictagServerResponse>{
+
+        private ProgressDialog progressDialog;
+
+        public CheckUsernamePasswordToServer(){
+            progressDialog = new ProgressDialog(LoginActivity.this);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.setMessage("Checking username and password");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected PictagServerResponse doInBackground(LoginRequest... loginRequests) {
+            try {
+                Thread.sleep(5 * 1000); // sleep 5 seconds
+                PictagServerResponse result = new PictagServerResponse();
+                result.setSuccess(false);
+                result.setMessage("Wrong username/password");
+                return result;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(PictagServerResponse response) {
+            if(progressDialog != null && progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+
+            if(response.getSuccess()){
+                Intent nextPage = new Intent(LoginActivity.this, MainScreenActivity.class);
+                nextPage.putExtra("username", response.getMessage());
+                startActivity(nextPage);
+            } else {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(LoginActivity.this);
+                dialogBuilder.setTitle("Login Failure").setMessage(response.getMessage());
+                AlertDialog dialog = dialogBuilder.create();
+                dialog.show();
+            }
+        }
     }
 }

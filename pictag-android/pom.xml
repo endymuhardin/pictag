@@ -21,6 +21,11 @@
 			<version>${platform.version}</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>pictag-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
