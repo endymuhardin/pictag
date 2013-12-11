@@ -111,12 +111,11 @@ public class LoginActivity extends Activity {
                 return result;
             } catch (Exception e) {
                 Log.d(LoginActivity.class.getName(), e.getMessage(), e);
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(LoginActivity.this);
-                dialogBuilder.setTitle("Network Communication Failure").setMessage(e.getMessage());
-                AlertDialog dialog = dialogBuilder.create();
-                dialog.show();
+                PictagServerResponse response = new PictagServerResponse();
+                response.setSuccess(false);
+                response.setMessage("Server offline");
+                return response;
             }
-            return null;
         }
 
         @Override
