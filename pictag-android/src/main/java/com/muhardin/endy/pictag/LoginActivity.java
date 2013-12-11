@@ -12,6 +12,12 @@ import android.widget.EditText;
 
 import com.muhardin.endy.pictag.dto.LoginRequest;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import training.pictag.dto.PictagServerResponse;
@@ -60,14 +66,22 @@ public class LoginActivity extends Activity {
         protected PictagServerResponse doInBackground(LoginRequest... loginRequests) {
             try {
                 Thread.sleep(5 * 1000); // sleep 5 seconds
-                PictagServerResponse result = new PictagServerResponse();
-                result.setSuccess(false);
-                result.setMessage("Wrong username/password");
+
+                String serverReply = "{\"success\": false, \"message\": \"Wrong username/password\"}";
+
+                ObjectMapper mapper = new ObjectMapper();
+                PictagServerResponse result = mapper.readValue(serverReply, PictagServerResponse.class);
                 return result;
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                return null;
+            } catch (JsonMappingException e) {
+                e.printStackTrace();
+            } catch (JsonParseException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            return null;
         }
 
         @Override
