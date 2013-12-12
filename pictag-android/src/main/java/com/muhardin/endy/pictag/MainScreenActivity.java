@@ -3,6 +3,8 @@ package com.muhardin.endy.pictag;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -10,12 +12,17 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -40,6 +47,54 @@ public class MainScreenActivity extends Activity {
         locationListener = new PictagLocationListener();
     }
 
+    private static final Integer CAMERA_REQUEST_CODE = 17; // some arbitrary number
+    private Bitmap capturedImage;
+
+    // initiate the capture
+    public void capture(View btnCapture) {
+        Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(captureIntent, CAMERA_REQUEST_CODE);
+    }
+
+    // receive capture result
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(Activity.RESULT_OK != resultCode) {
+            Toast.makeText(this, "Failed to capture image", Toast.LENGTH_SHORT);
+            return;
+        }
+
+        try {
+            if(CAMERA_REQUEST_CODE != requestCode){
+                Log.d(MainScreenActivity.class.getName(), "Request Code : " + requestCode);
+                Toast.makeText(this, "Request Code : "+requestCode, Toast.LENGTH_SHORT);
+                return;
+            }
+
+            if(Activity.RESULT_OK != resultCode){
+                Log.d(MainScreenActivity.class.getName(), "Result Code : " + resultCode);
+                Toast.makeText(this, "Result Code : "+resultCode, Toast.LENGTH_SHORT);
+                return;
+            }
+
+            // recycle old image
+            if(capturedImage != null){
+                capturedImage.recycle();
+            }
+            InputStream imageStream = getContentResolver().openInputStream(data.getData());
+            capturedImage = BitmapFactory.decodeStream(imageStream);
+
+            ImageView display = (ImageView) findViewById(R.id.imgCaptured);
+            display.setImageBitmap(capturedImage);
+            imageStream.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -48,6 +103,12 @@ public class MainScreenActivity extends Activity {
         Float distanceDifference = 3F; // 3 meters
         locationManager.requestLocationUpdates(provider,
                 updateInterval, distanceDifference, locationListener);
+
+    }
+
+    public void getLastLocation(View btnLastLocation) {
+        Location last = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        new LookupAddress().execute(last);
     }
 
     @Override
