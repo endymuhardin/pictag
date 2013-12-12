@@ -3,13 +3,20 @@ package com.muhardin.endy.pictag;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by endy on 12/10/13.
@@ -35,6 +42,7 @@ public class MainScreenActivity extends Activity {
 
     @Override
     protected void onResume() {
+        super.onResume();
         String provider = LocationManager.GPS_PROVIDER;
         Integer updateInterval = 3 * 1000; // 3 seconds
         Float distanceDifference = 3F; // 3 meters
@@ -44,6 +52,7 @@ public class MainScreenActivity extends Activity {
 
     @Override
     protected void onPause() {
+        super.onPause();
         locationManager.removeUpdates(locationListener);
     }
 
@@ -62,6 +71,13 @@ public class MainScreenActivity extends Activity {
             TextView txtLocation = (TextView) findViewById(R.id.txtLocation);
             txtLocation.setText(currentLocation);
 
+            if(!Geocoder.isPresent()){
+                EditText txtAddress = (EditText) findViewById(R.id.txtAddress);
+                txtAddress.setText("Address lookup service not available");
+                return;
+            }
+
+            new LookupAddress().execute(location.getLatitude(), location.getLongitude());
         }
 
         @Override
@@ -77,6 +93,42 @@ public class MainScreenActivity extends Activity {
         @Override
         public void onProviderDisabled(String s) {
 
+        }
+    }
+
+    private class LookupAddress extends AsyncTask<Double, Void, String>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Toast.makeText(MainScreenActivity.this, "Fetching address", Toast.LENGTH_SHORT);
+        }
+
+        @Override
+        protected String doInBackground(Double... coordinates) {
+            try {
+                Geocoder g = new Geocoder(MainScreenActivity.this);
+                Double lat = coordinates[1];
+                Double lon = coordinates[0];
+                List<Address> result = g.getFromLocation(lat, lon, 1);
+                if (result.isEmpty()) {
+                    return "No address found";
+                }
+
+                Address a = result.get(0);
+                return a.toString();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String address) {
+            super.onPostExecute(address);
+            EditText txtAddress = (EditText) findViewById(R.id.txtAddress);
+            txtAddress.setText(address);
         }
     }
 }
