@@ -10,4 +10,22 @@
         android:id="@+id/txtUsernameOutput"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:hint="Username" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Location"
+        android:id="@+id/lblLocation"
+        android:layout_gravity="center_horizontal" />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtLocation"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:editable="false"
+        android:hint="GPS Location" />
+
 </LinearLayout>
