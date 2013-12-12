@@ -77,7 +77,7 @@ public class MainScreenActivity extends Activity {
                 return;
             }
 
-            new LookupAddress().execute(location.getLatitude(), location.getLongitude());
+            new LookupAddress().execute(location);
         }
 
         @Override
@@ -96,7 +96,7 @@ public class MainScreenActivity extends Activity {
         }
     }
 
-    private class LookupAddress extends AsyncTask<Double, Void, String>{
+    private class LookupAddress extends AsyncTask<Location, Void, String>{
 
         @Override
         protected void onPreExecute() {
@@ -105,11 +105,11 @@ public class MainScreenActivity extends Activity {
         }
 
         @Override
-        protected String doInBackground(Double... coordinates) {
+        protected String doInBackground(Location... coordinates) {
             try {
                 Geocoder g = new Geocoder(MainScreenActivity.this);
-                Double lat = coordinates[1];
-                Double lon = coordinates[0];
+                Double lat = coordinates[0].getLatitude();
+                Double lon = coordinates[0].getLongitude();
                 List<Address> result = g.getFromLocation(lat, lon, 1);
                 if (result.isEmpty()) {
                     return "No address found";
